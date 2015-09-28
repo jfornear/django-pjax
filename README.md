@@ -39,9 +39,23 @@ Just run:
 
 First, read about [how to use jQuery-PJAX][defunkt’s jquery-pjax] and pick one of the techniques there.
 
-Next, make sure the views you’re PJAXing are using [TemplateResponse]. You can’t use Django-PJAX with a normal `HttpResponse`; only `TemplateResponse`.
+Next, make sure the views you’re PJAXing are using [TemplateResponse]. You can’t use Django-PJAX with a normal `HttpResponse`, only `TemplateResponse`.
 
-Decorate these views with the `pjax` decorator:
+### pjax decorator
+
+The pjax decorator:
+
+```python
+pjax(pjax_template=None, additional_templates=None, follow_redirects=False)
+```
+
+`pjax_template` (str): default template.
+
+`additional_templates` (dict): additional templates for multiple containers.
+
+`follow_redirects` (bool): if True, all django redirects will force a page reload, instead of placing the content in the pjax context.
+
+Decorate these views with the pjax decorator:
 
 ```python
 from djpjax import pjax
@@ -72,11 +86,13 @@ You can also pick a PJAX template for a PJAX container and use multiple decorato
 ```python
 from djpjax import pjax
 
-@pjax("pjax.html") # This is the default template.
-@pjax("pjax_inner.html", "#pjax-inner-content") # This is the template for #pjax-inner-content.
+@pjax(pjax_template="pjax.html",
+      additional_templates={"#pjax-inner-content": "pjax_inner.html")
 def my_view(request):
     return TemplateResponse(request, "template.html", {'my': 'context'})
 ```
+
+### class-based view
 
 If you’d like to use Django 1.3’s class-based views instead, a PJAX Mixin class is provided as well.
 Simply use `PJAXResponseMixin` where you would normally have used `TemplateResponseMixin`, and your `template_name` will be treated the same way as above.
