@@ -11,7 +11,7 @@ def read(fname):
 
 setup(
     name='django-pjax',
-    version='1.3',
+    version='1.4',
     description='Django-PJAX: The Django helper for jQuery-PJAX.',
     license='BSD',
     long_description=read('README.rst'),
