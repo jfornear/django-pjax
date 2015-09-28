@@ -1,17 +1,24 @@
+# -*- coding: utf-8 -*-
+
 import functools
 import sys
 
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.base import TemplateResponseMixin
 
 if sys.version_info[0] > 2:
     basestring = str
 
 
-def pjax(pjax_template=None, pjax_container=None):
-    def pjax_decorator(view):
-        view._pjax_templates = getattr(view, '_pjax_templates', {})
-        view._pjax_templates[pjax_container] = pjax_template
+class PJAXResponseRedirect(HttpResponse):
 
+    def __init__(self, redirect_to, *args, **kwargs):
+        super(PJAXResponseRedirect, self).__init__(*args, **kwargs)
+        self['X-PJAX-URL'] = self['Location'] = redirect_to
+
+
+def pjax(pjax_template=None, additional_templates=None, follow_redirects=False):
+    def pjax_decorator(view):
         @functools.wraps(view)
         def _view(request, *args, **kwargs):
             resp = view(request, *args, **kwargs)
@@ -20,12 +27,14 @@ def pjax(pjax_template=None, pjax_container=None):
             #     warnings.warn("@pjax used with non-template-response view")
             #     return resp
             if request.META.get('HTTP_X_PJAX', False):
-                pjax_container = request.META.get('HTTP_X_PJAX_CONTAINER', None)
-                default_pjax_template = view._pjax_templates.get(None, None)
-                pjax_template = view._pjax_templates.get(pjax_container, default_pjax_template)
+                if follow_redirects and isinstance(resp, HttpResponseRedirect):
+                    return PJAXResponseRedirect(redirect_to=resp['Location'])
 
-                if pjax_template:
-                    resp.template_name = pjax_template
+                container = request.META.get('HTTP_X_PJAX_CONTAINER', None)
+                template = additional_templates.get(container, pjax_template) if additional_templates else pjax_template
+
+                if template:
+                    resp.template_name = template
                 else:
                     resp.template_name = _pjaxify_template_var(resp.template_name)
             return resp

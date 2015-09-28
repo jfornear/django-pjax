@@ -41,7 +41,7 @@ First, read about [how to use jQuery-PJAX][defunkt’s jquery-pjax] and pick one
 
 Next, make sure the views you’re PJAXing are using [TemplateResponse]. You can’t use Django-PJAX with a normal `HttpResponse`, only `TemplateResponse`.
 
-### pjax decorator
+### PJAX decorator
 
 The pjax decorator:
 
@@ -92,7 +92,7 @@ def my_view(request):
     return TemplateResponse(request, "template.html", {'my': 'context'})
 ```
 
-### class-based view
+### Class-based view
 
 If you’d like to use Django 1.3’s class-based views instead, a PJAX Mixin class is provided as well.
 Simply use `PJAXResponseMixin` where you would normally have used `TemplateResponseMixin`, and your `template_name` will be treated the same way as above.
