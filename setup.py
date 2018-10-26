@@ -1,7 +1,4 @@
 import os
-import sys
-
-enc = sys.getdefaultencoding()
 
 try:
     from setuptools import setup
@@ -17,7 +14,7 @@ setup(
     version='1.4',
     description='Django-PJAX: The Django helper for jQuery-PJAX.',
     license='BSD',
-    long_description=open('README.rst', encoding=enc),
+    long_description=unicode('README.rst', 'utf-8'),
     url='https://github.com/eventials/django-pjax',
     author='Jacob Kaplan-Moss',
     author_email='jacob@jacobian.org',
